@@ -26,4 +26,6 @@
 <!--    <result column="CURRENT_CONNECTIONS" jdbcType="BIGINT" property="currentConnections" />-->
 <!--    <result column="TOTAL_CONNECTIONS" jdbcType="BIGINT" property="totalConnections" />-->
 <!--  </resultMap>-->
+
+  
 </mapper>
