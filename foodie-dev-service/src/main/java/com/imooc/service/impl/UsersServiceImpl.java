@@ -6,7 +6,7 @@ import com.imooc.pojo.bo.UserBO;
 import com.imooc.service.UsersService;
 import com.imooc.utils.DateUtil;
 import com.imooc.utils.MD5Utils;
-import com.imooc.utils.Sex;
+import com.imooc.enums.Sex;
 import org.n3r.idworker.Sid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -71,6 +71,11 @@ public class UsersServiceImpl implements UsersService {
     @Transactional(propagation = Propagation.SUPPORTS)
     @Override
     public Users queryUserForLogin(String username, String password) {
+        try {
+            Thread.sleep(2500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         Example example = new Example(Users.class);
         Example.Criteria criteria = example.createCriteria();
 

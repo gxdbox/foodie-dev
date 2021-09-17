@@ -1,4 +1,4 @@
-package com.imooc.utils;
+package com.imooc.enums;
 
 public enum Sex {
     man(0,"男"),

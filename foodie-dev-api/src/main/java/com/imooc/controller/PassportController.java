@@ -9,6 +9,8 @@ import com.imooc.utils.JsonUtils;
 import com.imooc.utils.MD5Utils;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,10 +23,11 @@ public class PassportController {
     @Autowired
     private UsersService usersService;
 
+    final static Logger logger = LoggerFactory.getLogger(PassportController.class);
+
     @ApiOperation(value = "用户名是否已存在" , notes = "用户名是否已存在", httpMethod = "GET")
     @GetMapping(value = "/usernameIsExist")
-    public IMOOCJSONResult usernameIsExist(@RequestParam String username){
-
+    public IMOOCJSONResult usernameIsExist(@RequestParam String username)  {
         if (StringUtils.isBlank(username)){
             return IMOOCJSONResult.errorMsg("username不能为空");
         }
@@ -78,6 +81,7 @@ public class PassportController {
                                  HttpServletRequest request,
                                  HttpServletResponse response) throws Exception {
 
+
         if (StringUtils.isBlank(userBO.getUsername()) || StringUtils.isBlank(userBO.getPassword())){
             return IMOOCJSONResult.errorMsg("用户名或密码不能为空");
         }
@@ -92,6 +96,15 @@ public class PassportController {
         CookieUtils.setCookie(request,response,"user", JsonUtils.objectToJson(userResult),true);
 
         return IMOOCJSONResult.ok(userResult);
+    }
+
+    @ApiOperation(value = "用户退出",notes = "用户退出",httpMethod = "POST")
+    @PostMapping("/logout")
+    public IMOOCJSONResult logout(HttpServletRequest request,
+                                  HttpServletResponse response,
+                                  String userId) throws Exception {
+        CookieUtils.deleteCookie(request,response,"user");
+        return IMOOCJSONResult.ok();
     }
 
     private Users setNullProperty(Users userResult) {
