@@ -6,7 +6,7 @@ import com.imooc.pojo.bo.UserBO;
 import com.imooc.service.UsersService;
 import com.imooc.utils.DateUtil;
 import com.imooc.utils.MD5Utils;
-import com.imooc.enums.Sex;
+import com.imooc.enums.SexEnum;
 import org.n3r.idworker.Sid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -57,7 +57,7 @@ public class UsersServiceImpl implements UsersService {
         users.setFace(FACE_URL);
         users.setMobile("");
         users.setEmail("");
-        users.setSex(Sex.secret.type);
+        users.setSex(SexEnum.secret.type);
         users.setBirthday(DateUtil.stringToDate("1900-01-01"));
         users.setCreatedTime(new Date());
         users.setUpdatedTime(new Date());
