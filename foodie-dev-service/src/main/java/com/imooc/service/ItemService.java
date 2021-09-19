@@ -13,6 +13,6 @@ public interface ItemService {
     List<ItemsImg> queryItemImgById(String id);
     List<ItemsSpec> queryItemSpecById(String id);
     ItemsParam queryItemsParamById(String id);
-    CommentLevelCountVO queryCommentLevelCount(String itemId,Integer level);
+    CommentLevelCountVO queryCommentLevelCount(String itemId);
 
 }

@@ -42,13 +42,13 @@ public class ItemController {
         return IMOOCJSONResult.ok(itemInfoVO);
     }
 
-    @GetMapping("/comments")
+    @GetMapping("/commentLevel")
     @ApiOperation(value = "获取商品评价" , notes = "获取商品评价", httpMethod = "GET")
-    public IMOOCJSONResult comments(@RequestParam String itemId,@RequestParam Integer level){
+    public IMOOCJSONResult comments(@RequestParam String itemId){
         if (StringUtils.isBlank(itemId)) {
             return IMOOCJSONResult.errorMsg(null);
         }
-        CommentLevelCountVO commentLevelCountVO = itemService.queryCommentLevelCount(itemId,level);
+        CommentLevelCountVO commentLevelCountVO = itemService.queryCommentLevelCount(itemId);
         return IMOOCJSONResult.ok(commentLevelCountVO);
     }
 }

@@ -4,8 +4,8 @@ import lombok.Data;
 
 @Data
 public class CommentLevelCountVO {
-    private Integer goodCommentCount;
-    private Integer mediumCommentCount;
-    private Integer badCommentCount;
-    private Integer totalCommentCount;
+    private Integer goodCounts;
+    private Integer normalCounts;
+    private Integer badCounts;
+    private Integer totalCounts;
 }

@@ -64,33 +64,16 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public CommentLevelCountVO queryCommentLevelCount(String itemId,Integer level) {
+    public CommentLevelCountVO queryCommentLevelCount(String itemId) {
         CommentLevelCountVO commentLevelCountVO = new CommentLevelCountVO();
-        if (level == null){
-            int goodCommentsCount = getItemCommentsCount(itemId, CommentEnum.GOOD.type);
-            int mediumCommentsCount = getItemCommentsCount(itemId, CommentEnum.MEDIUM.type);
-            int badCommentsCount = getItemCommentsCount(itemId, CommentEnum.BAD.type);
-            int totalCommentCount = goodCommentsCount + mediumCommentsCount + badCommentsCount;
-
-            commentLevelCountVO.setBadCommentCount(badCommentsCount);
-            commentLevelCountVO.setMediumCommentCount(mediumCommentsCount);
-            commentLevelCountVO.setGoodCommentCount(goodCommentsCount);
-            commentLevelCountVO.setTotalCommentCount(totalCommentCount);
-        }else {
-            int itemCommentsCount = getItemCommentsCount(itemId, level);
-            switch (level){
-                case 1: commentLevelCountVO.setGoodCommentCount(itemCommentsCount);
-                break;
-                case 2:commentLevelCountVO.setMediumCommentCount(itemCommentsCount);
-                break;
-                case 3:commentLevelCountVO.setBadCommentCount(itemCommentsCount);
-            }
-        }
-
-
-
-
-
+        int goodCommentsCount = getItemCommentsCount(itemId, CommentEnum.GOOD.type);
+        int mediumCommentsCount = getItemCommentsCount(itemId, CommentEnum.MEDIUM.type);
+        int badCommentsCount = getItemCommentsCount(itemId, CommentEnum.BAD.type);
+        int totalCommentCount = goodCommentsCount + mediumCommentsCount + badCommentsCount;
+        commentLevelCountVO.setBadCounts(badCommentsCount);
+        commentLevelCountVO.setNormalCounts(mediumCommentsCount);
+        commentLevelCountVO.setGoodCounts(goodCommentsCount);
+        commentLevelCountVO.setTotalCounts(totalCommentCount);
         return commentLevelCountVO;
     }
 
