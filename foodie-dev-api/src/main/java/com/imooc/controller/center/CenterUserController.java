@@ -33,7 +33,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("userInfo")
-@Api(value = "用户信息", tags = {"用户信息相关接口"})
+@Api(value = "我的信息", tags = {"我的信息相关接口"})
 public class CenterUserController extends BaseController {
 
     @Autowired
@@ -51,7 +51,8 @@ public class CenterUserController extends BaseController {
             HttpServletRequest request,
             HttpServletResponse response) {
 
-        String fileSpace = IMAGE_USER_FACE_LOCATION;
+//        String fileSpace = IMAGE_USER_FACE_LOCATION;
+        String fileSpace = fileUpload.getImageUserFaceLocation();
         String uploadPathPrefix = File.separator + userId;
 
         if (null != file) {
