@@ -13,6 +13,7 @@ import com.imooc.service.AddressService;
 import com.imooc.service.CarouselService;
 import com.imooc.service.ItemService;
 import com.imooc.service.OrdersService;
+import com.imooc.utils.DateUtil;
 import org.n3r.idworker.Sid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -141,4 +142,30 @@ public class OrdersServiceImpl implements OrdersService {
             throw new RuntimeException("修改订单状态失败");
         }
     }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public void closeOrder() {
+        // 查询所有未付款订单，判断时间是否超时（1天），超时则关闭交易
+        OrderStatus orderStatus = new OrderStatus();
+        orderStatus.setOrderStatus(OrderStatusEnum.WAIT_PAY.type);
+        List<OrderStatus> list = orderStatusMapper.select(orderStatus);
+        for (OrderStatus os : list) {
+            Date createdTime = os.getCreatedTime();
+            int i = DateUtil.daysBetween(createdTime, new Date());
+            if (i>=1){
+                doClose(os.getOrderId());
+            }
+        }
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    void doClose(String orderId){
+        OrderStatus orderStatus = new OrderStatus();
+        orderStatus.setOrderId(orderId);
+        orderStatus.setOrderStatus(OrderStatusEnum.CLOSE.type);
+        orderStatus.setCloseTime(new Date());
+        orderStatusMapper.updateByPrimaryKeySelective(orderStatus);
+    }
 }
+

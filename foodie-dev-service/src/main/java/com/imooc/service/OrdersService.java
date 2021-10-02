@@ -19,4 +19,9 @@ public interface OrdersService {
      * @param waitDeliver
      */
     void updateOrderStatus(String orderId, Integer waitDeliver);
+
+    /**
+     * 定时关闭未支付的订单
+     */
+    void closeOrder();
 }
