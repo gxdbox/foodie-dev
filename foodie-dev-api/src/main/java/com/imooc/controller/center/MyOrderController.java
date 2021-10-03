@@ -1,6 +1,7 @@
 package com.imooc.controller.center;
 
 import com.imooc.controller.BaseController;
+import com.imooc.pojo.vo.OrderStatusCountsVO;
 import com.imooc.service.center.MyOrderService;
 import com.imooc.utils.IMOOCJSONResult;
 import com.imooc.utils.PagedGridResult;
@@ -52,24 +53,24 @@ public class MyOrderController extends BaseController {
     }
 
     @PostMapping("confirmReceive")
-    @ApiOperation(value = "确认收货",tags = "确认收货",httpMethod = "POST")
+    @ApiOperation(value = "确认收货", tags = "确认收货", httpMethod = "POST")
     public IMOOCJSONResult confirmReceive(
-            @ApiParam(name = "userId",value = "用户id",required = true)
+            @ApiParam(name = "userId", value = "用户id", required = true)
             @RequestParam String userId,
-            @ApiParam(name = "orderId",value = "订单Id",required = true)
-            @RequestParam String orderId){
+            @ApiParam(name = "orderId", value = "订单Id", required = true)
+            @RequestParam String orderId) {
         IMOOCJSONResult checkResult = checkUserOrder(userId, orderId);
-        if (checkResult.getStatus() != HttpStatus.OK.value()){
+        if (checkResult.getStatus() != HttpStatus.OK.value()) {
             return checkResult;
         }
         Boolean boolen = myOrderService.updateReceiveOrderStatus(orderId);
-        if (!boolen){
+        if (!boolen) {
             return IMOOCJSONResult.errorMsg("确认订单失败");
         }
         return IMOOCJSONResult.ok();
     }
 
-    @ApiOperation(value="用户删除订单", notes="用户删除订单", httpMethod = "POST")
+    @ApiOperation(value = "用户删除订单", notes = "用户删除订单", httpMethod = "POST")
     @PostMapping("/delete")
     public IMOOCJSONResult delete(
             @ApiParam(name = "orderId", value = "订单id", required = true)
@@ -88,5 +89,43 @@ public class MyOrderController extends BaseController {
         }
 
         return IMOOCJSONResult.ok();
+    }
+
+    @PostMapping("statusCounts")
+    @ApiOperation(value = "获得订单状态数概况", tags = "获得订单状态数概况", httpMethod = "POST")
+    public IMOOCJSONResult orderStatusCount(
+            @ApiParam(name = "userId", value = "用户id", required = true)
+            @RequestParam("userId") String userId) {
+        if (StringUtils.isBlank(userId)) {
+            return IMOOCJSONResult.errorMsg(null);
+        }
+        OrderStatusCountsVO statusCounts = myOrderService.queryMyOrderStatusCounts(userId);
+        return IMOOCJSONResult.ok(statusCounts);
+    }
+
+    @ApiOperation(value = "查询订单动向", notes = "查询订单动向", httpMethod = "POST")
+    @PostMapping("/trend")
+    public IMOOCJSONResult trend(
+            @ApiParam(name = "userId", value = "用户id", required = true)
+            @RequestParam String userId,
+            @ApiParam(name = "page", value = "查询下一页的第几页", required = false)
+            @RequestParam Integer page,
+            @ApiParam(name = "pageSize", value = "分页的每一页显示的条数", required = false)
+            @RequestParam Integer pageSize) {
+
+        if (StringUtils.isBlank(userId)) {
+            return IMOOCJSONResult.errorMsg(null);
+        }
+        if (page == null) {
+            page = 1;
+        }
+        if (pageSize == null) {
+            pageSize = COMMON_PAGE_SIZE;
+        }
+        PagedGridResult grid = myOrderService.getOrdersTrend(userId,
+                page,
+                pageSize);
+
+        return IMOOCJSONResult.ok(grid);
     }
 }

@@ -1,4 +1,4 @@
-package com.imooc.service;
+package com.imooc.service.impl;
 
 import com.github.pagehelper.PageInfo;
 import com.imooc.utils.PagedGridResult;

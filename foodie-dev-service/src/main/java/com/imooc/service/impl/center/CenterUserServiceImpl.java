@@ -1,5 +1,7 @@
 package com.imooc.service.impl.center;
 
+import com.imooc.mapper.OrderMapperCustom;
+import com.imooc.mapper.OrdersMapper;
 import com.imooc.mapper.UsersMapper;
 import com.imooc.pojo.Users;
 import com.imooc.pojo.bo.CenterUserBO;
@@ -11,11 +13,15 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class CenterUserServiceImpl implements CenterUserService {
     @Autowired
     private UsersMapper usersMapper;
+    @Autowired
+    private OrderMapperCustom orderMapperCustom;
 
     @Transactional(propagation = Propagation.SUPPORTS)
     @Override
@@ -44,4 +50,5 @@ public class CenterUserServiceImpl implements CenterUserService {
         usersMapper.updateByPrimaryKeySelective(users);
         return queryUserInfo(userId);
     }
+
 }
