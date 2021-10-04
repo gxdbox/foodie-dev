@@ -14,6 +14,7 @@ public class BaseController {
     public static final Integer COMMON_PAGE_SIZE = 10;
     public static final Integer PAGE_SIZE = 20;
     public static final String IMAGE_USER_FACE_LOCATION = File.separator + "E:" + File.separator + "code" + File.separator + "image";
+    String payReturnUrl = "http://1.117.214.155:8088/foodie-dev-api/orders/notifyMerchantOrderPaid";
     @Autowired
     private MyOrderService myOrderService;
 

@@ -18,6 +18,10 @@ public class CorsConfig {
     public CorsFilter corsFilter(){
         CorsConfiguration config = new CorsConfiguration();
         config.addAllowedOrigin("http://localhost:8080");
+        config.addAllowedOrigin("http://shop.pinxow.com:8080");
+        config.addAllowedOrigin("http://center.pinxow.com:8080");
+        config.addAllowedOrigin("http://shop.pinxow.com");
+        config.addAllowedOrigin("http://center.pinxow.com");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         config.setAllowCredentials(true);
