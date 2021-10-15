@@ -1,7 +1,10 @@
 package com.imooc.pojo;
 
+import com.imooc.pojo.bo.ShopcartBO;
+
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 public class Orders {
     /**
@@ -92,6 +95,16 @@ public class Orders {
      */
     @Column(name = "updated_time")
     private Date updatedTime;
+
+    private List<ShopcartBO> shopcartList;
+
+    public List<ShopcartBO> getShopcartList() {
+        return shopcartList;
+    }
+
+    public void setShopcartList(List<ShopcartBO> shopcartList) {
+        this.shopcartList = shopcartList;
+    }
 
     /**
      * 获取订单主键;同时也是订单编号

@@ -1,12 +1,10 @@
 package com.imooc.controller;
 
 import com.imooc.pojo.Users;
+import com.imooc.pojo.bo.ShopcartBO;
 import com.imooc.pojo.bo.UserBO;
 import com.imooc.service.UsersService;
-import com.imooc.utils.CookieUtils;
-import com.imooc.utils.IMOOCJSONResult;
-import com.imooc.utils.JsonUtils;
-import com.imooc.utils.MD5Utils;
+import com.imooc.utils.*;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -16,12 +14,16 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("passport")
-public class PassportController {
+public class PassportController extends BaseController{
     @Autowired
     private UsersService usersService;
+    @Autowired
+    private RedisOperator   redisOperator;
 
     final static Logger logger = LoggerFactory.getLogger(PassportController.class);
 
@@ -43,7 +45,9 @@ public class PassportController {
 
     @ApiOperation(value = "用户注册",notes = "用户注册",httpMethod = "POST")
     @PostMapping ("/regist")
-    public IMOOCJSONResult createUser(@RequestBody UserBO userBO){
+    public IMOOCJSONResult createUser(@RequestBody UserBO userBO,
+                                      HttpServletRequest request,
+                                      HttpServletResponse response){
         String username = userBO.getUsername();
         String password = userBO.getPassword();
         String repassword = userBO.getConfirmPassword();
@@ -71,6 +75,8 @@ public class PassportController {
         }
         //5、创建用户
         Users user = usersService.createUser(userBO);
+
+        synShopcartData(request, response, user.getId());
         return IMOOCJSONResult.ok(user);
     }
 
@@ -91,11 +97,53 @@ public class PassportController {
         if (userResult == null){
             return IMOOCJSONResult.errorMsg("用户名或密码错误");
         }
-
         userResult = setNullProperty(userResult);
-        CookieUtils.setCookie(request,response,"user", JsonUtils.objectToJson(userResult),true);
+        synShopcartData(request, response, userResult.getId());
 
         return IMOOCJSONResult.ok(userResult);
+    }
+
+    /**
+     * 注册登录成功后，同步cookie和redis中的购物车数据
+     * @param request
+     * @param response
+     */
+    private void synShopcartData(HttpServletRequest request, HttpServletResponse response, String userId) {
+        String shopcartJsonRedis = redisOperator.get(FOODIE_SHOPCART + ":" + userId);
+        String shopcartCookie = CookieUtils.getCookieValue(request, FOODIE_SHOPCART, true);
+        List<ShopcartBO> pendingDeleteList = new ArrayList<>();
+        if (StringUtils.isNotBlank(shopcartJsonRedis)){
+            if (StringUtils.isNotBlank(shopcartCookie)){
+                List<ShopcartBO> shopcartCookieList = JsonUtils.jsonToList(shopcartCookie, ShopcartBO.class);
+                List<ShopcartBO> shopcartRedisList = JsonUtils.jsonToList(shopcartJsonRedis, ShopcartBO.class);
+
+                for (ShopcartBO redisShopcart : shopcartRedisList) {
+                    String redisSpecId = redisShopcart.getSpecId();
+                    for (ShopcartBO cookieShopcart : shopcartCookieList) {
+                        String cookieSpecId = cookieShopcart.getSpecId();
+                        if (redisSpecId.equals(cookieSpecId)){
+                            // 覆盖购买数量，不累加，参考京东
+                            redisShopcart.setBuyCounts(cookieShopcart.getBuyCounts());
+                            // 把cookieShopcart放入待删除列表，用于最后的删除与合并
+                            pendingDeleteList.add(cookieShopcart);
+                        }
+                    }
+                }
+
+                // 从现有cookie中删除对应的覆盖过的商品数据
+                shopcartCookieList.removeAll(pendingDeleteList);
+                // 合并两个list
+                shopcartRedisList.addAll(shopcartCookieList);
+                // 更新到redis和cookie
+                CookieUtils.setCookie(request, response, FOODIE_SHOPCART, JsonUtils.objectToJson(shopcartRedisList), true);
+                redisOperator.set(FOODIE_SHOPCART + ":" + userId, JsonUtils.objectToJson(shopcartRedisList));
+
+            }else {
+                CookieUtils.setCookie(request, response, FOODIE_SHOPCART, shopcartJsonRedis, true);
+            }
+        }else {
+            redisOperator.set(FOODIE_SHOPCART + ":" + userId, shopcartCookie);
+        }
     }
 
     @ApiOperation(value = "用户退出",notes = "用户退出",httpMethod = "POST")

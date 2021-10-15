@@ -1,4 +1,5 @@
 package com.imooc.service.impl;
+import java.util.ArrayList;
 import java.util.Date;
 
 import com.imooc.enums.OrderStatusEnum;
@@ -8,6 +9,7 @@ import com.imooc.mapper.OrderItemsMapper;
 import com.imooc.mapper.OrderStatusMapper;
 import com.imooc.mapper.OrdersMapper;
 import com.imooc.pojo.*;
+import com.imooc.pojo.bo.ShopcartBO;
 import com.imooc.pojo.bo.SubmitOrderBO;
 import com.imooc.service.AddressService;
 import com.imooc.service.CarouselService;
@@ -41,7 +43,7 @@ public class OrdersServiceImpl implements OrdersService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public String create(SubmitOrderBO submitOrderBO) {
+    public Orders create(List<ShopcartBO> shopcartList,SubmitOrderBO submitOrderBO) {
         Integer payMethod = submitOrderBO.getPayMethod();
         String addressId = submitOrderBO.getAddressId();
         String itemSpecIds = submitOrderBO.getItemSpecIds();
@@ -82,10 +84,13 @@ public class OrdersServiceImpl implements OrdersService {
         String itemSpecId[] = itemSpecIds.split(",");
         Integer totalAmmount = 0;
         Integer realAmmount = 0;
-
+        List<ShopcartBO> beRemovedShopcartList  = new ArrayList<>();
         for (String specId : itemSpecId) {
             // TODO 整合redis后，商品购买的数量重新从redis的购物车中获取
-            int buyCounts = 1;
+            ShopcartBO shopcartBO = getShopcartCountFromRedis(specId,shopcartList);
+            int buyCounts = shopcartBO.getBuyCounts();
+            beRemovedShopcartList.add(shopcartBO);
+
             // 2.1 根据规格id，查询规格的具体信息，主要获取价格
             ItemsSpec itemsSpec = itemService.queryItemSpecBySpecId(specId);
             totalAmmount += itemsSpec.getPriceDiscount()*buyCounts;
@@ -117,6 +122,7 @@ public class OrdersServiceImpl implements OrdersService {
 
         orders.setTotalAmount(totalAmmount);
         orders.setRealPayAmount(realAmmount);
+        orders.setShopcartList(beRemovedShopcartList);
         ordersMapper.insert(orders);
 
         //3、保存订单状态表
@@ -127,7 +133,16 @@ public class OrdersServiceImpl implements OrdersService {
         orderStatusMapper.insert(waitPayorderStatus);
 
         //构建商户订单，用于传给支付中心
-        return orderId;
+        return orders;
+    }
+
+    private ShopcartBO getShopcartCountFromRedis(String specId, List<ShopcartBO> shopcartList) {
+        for (ShopcartBO shopcartBO : shopcartList) {
+            if (specId.equals(shopcartBO.getSpecId())){
+                return shopcartBO;
+            }
+        }
+        return null;//todo 返回null，会不会不好
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
