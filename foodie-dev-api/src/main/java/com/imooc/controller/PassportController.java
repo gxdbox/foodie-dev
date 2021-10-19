@@ -3,12 +3,14 @@ package com.imooc.controller;
 import com.imooc.pojo.Users;
 import com.imooc.pojo.bo.ShopcartBO;
 import com.imooc.pojo.bo.UserBO;
+import com.imooc.pojo.vo.UsersVO;
 import com.imooc.service.UsersService;
 import com.imooc.utils.*;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("passport")
@@ -75,6 +78,8 @@ public class PassportController extends BaseController{
         }
         //5、创建用户
         Users user = usersService.createUser(userBO);
+        UsersVO usersVO = conventUserVO(user);
+        CookieUtils.setCookie(request,response,"user",JsonUtils.objectToJson(usersVO),true);
 
         synShopcartData(request, response, user.getId());
         return IMOOCJSONResult.ok(user);
@@ -97,7 +102,10 @@ public class PassportController extends BaseController{
         if (userResult == null){
             return IMOOCJSONResult.errorMsg("用户名或密码错误");
         }
-        userResult = setNullProperty(userResult);
+//        userResult = setNullProperty(userResult);
+        UsersVO usersVO = conventUserVO(userResult);
+        CookieUtils.setCookie(request,response,"user",JsonUtils.objectToJson(usersVO),true);
+
         synShopcartData(request, response, userResult.getId());
 
         return IMOOCJSONResult.ok(userResult);
@@ -152,6 +160,8 @@ public class PassportController extends BaseController{
                                   HttpServletResponse response,
                                   String userId) throws Exception {
         CookieUtils.deleteCookie(request,response,"user");
+        redisOperator.del(REDIS_USER_TOKEN+":"+userId);
+        CookieUtils.deleteCookie(request,response,FOODIE_SHOPCART);
         return IMOOCJSONResult.ok();
     }
 

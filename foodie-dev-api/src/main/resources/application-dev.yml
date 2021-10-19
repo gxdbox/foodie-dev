@@ -9,7 +9,14 @@ spring:
     database: 1
     port: 6379
     host: 1.117.214.155
-    password: abc123456
+    password: imooc
+#    password: imooc
+#    cluster:
+#      nodes: 81.68.129.83:6379 81.68.129.83:8001 81.68.129.83:8002 81.68.220.186:6379 81.68.220.186:8003 81.68.220.186:8004
+#    password: imooc
+#    sentinel:
+#      master: mymaster
+#      nodes: 81.68.220.186:26379,81.68.129.83:26379,1.117.214.155:26379
 
 mybatis:
   configuration:

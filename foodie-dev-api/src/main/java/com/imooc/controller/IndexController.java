@@ -57,9 +57,9 @@ public class IndexController {
     public IMOOCJSONResult queryAllRootLevelCat(){
         String cats = redisOperator.get("cats");
         List<Category> list = new ArrayList<>();
-        if (StringUtils.isBlank(cats)){
+        if (null == cats || StringUtils.isBlank(cats)){
             list = categoryService.queryAllRootLevelCat(CategoryEnum.One.type);
-            redisOperator.set("cats",JsonUtils.objectToJson(cats));
+            redisOperator.set("cats",JsonUtils.objectToJson(list));
         }else {
             list = JsonUtils.jsonToList(cats,Category.class);
         }
@@ -78,7 +78,13 @@ public class IndexController {
         String subCatStr = redisOperator.get("subCat:" + rootCatId);
         if (StringUtils.isBlank(subCatStr)){
             list = categoryService.getSubCatList(rootCatId);
-            redisOperator.set("subCat:"+rootCatId,JsonUtils.objectToJson(list));
+
+            if(list != null && list.size() > 0){
+                redisOperator.set("subCat:"+rootCatId,JsonUtils.objectToJson(list));
+            }else {
+                redisOperator.set("subCat:"+rootCatId,JsonUtils.objectToJson(list),5*60);
+            }
+
         }else {
             list = JsonUtils.jsonToList(subCatStr,CategoryVO.class);
         }

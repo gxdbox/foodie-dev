@@ -3,6 +3,7 @@ package com.imooc.controller.center;
 import com.imooc.controller.BaseController;
 import com.imooc.pojo.Users;
 import com.imooc.pojo.bo.CenterUserBO;
+import com.imooc.pojo.vo.UsersVO;
 import com.imooc.resource.FileUpload;
 import com.imooc.service.center.CenterUserService;
 import com.imooc.utils.CookieUtils;
@@ -108,9 +109,10 @@ public class CenterUserController extends BaseController {
                 + "?t=" + DateUtil.getCurrentDateString(DateUtil.DATE_PATTERN);
         // 更新用户头像到数据库
         Users userResult = centerUserService.updateUserFace(userId, finalUserFaceUrl);
-        userResult = setNullProperty(userResult);
+//        userResult = setNullProperty(userResult);
+        UsersVO usersVO = conventUserVO(userResult);
         CookieUtils.setCookie(request, response, "user",
-                JsonUtils.objectToJson(userResult), true);
+                JsonUtils.objectToJson(usersVO), true);
 
         return IMOOCJSONResult.ok();
     }
@@ -129,9 +131,9 @@ public class CenterUserController extends BaseController {
         }
 
         Users users = centerUserService.updateUserInfo(userId, centerUserBO);
-        setNullProperty(users);
-
-        CookieUtils.setCookie(request, response, "user", JsonUtils.objectToJson(users), true);
+//        setNullProperty(users);
+        UsersVO usersVO = conventUserVO(users);
+        CookieUtils.setCookie(request, response, "user", JsonUtils.objectToJson(usersVO), true);
         return IMOOCJSONResult.ok();
     }
 
