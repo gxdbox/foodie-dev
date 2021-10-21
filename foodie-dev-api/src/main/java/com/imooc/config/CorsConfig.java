@@ -20,8 +20,17 @@ public class CorsConfig {
         config.addAllowedOrigin("http://localhost:8080");
         config.addAllowedOrigin("http://shop.pinxow.com:8080");
         config.addAllowedOrigin("http://center.pinxow.com:8080");
+        config.addAllowedOrigin("http://shop2.pinxow.com:8080");
+        config.addAllowedOrigin("http://center2.pinxow.com:8080");
+        config.addAllowedOrigin("http://shop3.pinxow.com:8080");
+        config.addAllowedOrigin("http://center3.pinxow.com:8080");
         config.addAllowedOrigin("http://shop.pinxow.com");
         config.addAllowedOrigin("http://center.pinxow.com");
+        config.addAllowedOrigin("http://shop2.pinxow.com");
+        config.addAllowedOrigin("http://center2.pinxow.com");
+        config.addAllowedOrigin("http://shop3.pinxow.com");
+        config.addAllowedOrigin("http://center3.pinxow.com");
+        config.addAllowedOrigin("*");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         config.setAllowCredentials(true);
