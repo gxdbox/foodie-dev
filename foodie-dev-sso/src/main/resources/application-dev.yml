@@ -17,7 +17,11 @@ spring:
 #    sentinel:
 #      master: mymaster
 #      nodes: 81.68.220.186:26379,81.68.129.83:26379,1.117.214.155:26379
-
+  thymeleaf:
+    mode: HTML
+    encoding: UTF-8
+    prefix: classpath:/templates/
+    suffix: .html
 mybatis:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
