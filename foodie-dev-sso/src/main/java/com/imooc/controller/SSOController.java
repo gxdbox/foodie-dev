@@ -92,9 +92,57 @@ public class SSOController {
 
     private void setCookie(String key,String val,HttpServletResponse response){
         Cookie cookie = new Cookie(key, val);
-        cookie.setDomain("pinxow.com");
+        cookie.setDomain("127.0.0.1");
         cookie.setPath("/");
         response.addCookie(cookie);
+    }
+
+    @PostMapping("/verifyTmpTicket")
+    @ResponseBody
+    public IMOOCJSONResult verifyTmpTicket(String tmpTicket,
+                                           HttpServletRequest request,
+                                           HttpServletResponse response) throws Exception {
+        //1、tmpTikcet
+        String tmpTicketValue = redisOperator.get(REDIS_TMP_TICKET + ":" + tmpTicket);
+        if (StringUtils.isBlank(tmpTicketValue)){
+            return IMOOCJSONResult.errorMsg("用户票据异常");
+        }
+
+        if (!tmpTicketValue.equals(MD5Utils.getMD5Str(tmpTicket))){
+            return IMOOCJSONResult.errorMsg("用户票据异常");
+        }else {
+            redisOperator.del(REDIS_TMP_TICKET + ":" + tmpTicket);
+        }
+
+        //2、userTicket
+        String userTicket = getCookie(request,REDIS_USER_COOKIE);
+        String userId = redisOperator.get(REDIS_USER_TICKET + ":" + userTicket);
+        if (StringUtils.isBlank(userId)){
+            return IMOOCJSONResult.errorMsg("用户id为空");
+        }
+
+        String userToken = redisOperator.get(REDIS_USER_TOKEN + ":" + userId);
+        if (StringUtils.isBlank(userToken)){
+            return IMOOCJSONResult.errorMsg("用户session为空");
+        }
+
+        return IMOOCJSONResult.ok(JsonUtils.jsonToPojo(userToken,UsersVO.class));
+    }
+
+    private String getCookie(HttpServletRequest request, String tmpTicketValue) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies == null || StringUtils.isBlank(tmpTicketValue)){
+            return null;
+        }
+
+        String cookieValue = null;
+        for (Cookie cookie : cookies) {
+            if (tmpTicketValue.equals(cookie.getName())){
+                cookieValue =cookie.getValue();
+                break;
+            }
+        }
+        return cookieValue;
     }
 
 }
