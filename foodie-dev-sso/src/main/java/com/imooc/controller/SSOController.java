@@ -40,8 +40,35 @@ public class SSOController {
                         HttpServletRequest request,
                         HttpServletResponse response) {
      model.addAttribute("returnUrl",returnUrl);
-     //后续完善跳转判断 TODO
+
+        String userTicket = getCookie(request, REDIS_USER_COOKIE);
+        boolean isVerified =verifyUserTicket(userTicket);
+        if (isVerified){
+            String tmpTicket = createTmpTicket();
+            return "redirect:" + returnUrl + "?tmpTicket=" + tmpTicket;
+        }
+
         return "login";
+    }
+
+    private boolean verifyUserTicket(String userTicket) {
+        // 0. 验证CAS门票不能为空
+        if (StringUtils.isBlank(userTicket)) {
+            return false;
+        }
+
+        // 1. 验证CAS门票是否有效
+        String userId = redisOperator.get(REDIS_USER_TICKET + ":" + userTicket);
+        if (StringUtils.isBlank(userId)){
+            return false;
+        }
+
+        String userToken = redisOperator.get(REDIS_USER_TOKEN + ":" + userId);
+        if (StringUtils.isBlank(userToken)){
+            return false;
+        }
+
+        return true;
     }
 
     @PostMapping("/doLogin")
@@ -79,20 +106,26 @@ public class SSOController {
         setCookie(REDIS_USER_COOKIE,userTicket,response);
 
         //4、
+        String tmpTicket = createTmpTicket();
+
+
+        return "redirect:" + returnUrl + "?tmpTicket=" + tmpTicket;
+    }
+
+
+    private String createTmpTicket() {
         String tmpTicket = UUID.randomUUID().toString().trim();
         try {
             redisOperator.set(REDIS_TMP_TICKET + ":" + tmpTicket,MD5Utils.getMD5Str(tmpTicket),6000);
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
-        return "redirect:" + returnUrl + "?tmpTicket=" + tmpTicket;
+        return tmpTicket;
     }
 
     private void setCookie(String key,String val,HttpServletResponse response){
         Cookie cookie = new Cookie(key, val);
-        cookie.setDomain("127.0.0.1");
+            cookie.setDomain("localhost");
         cookie.setPath("/");
         response.addCookie(cookie);
     }
