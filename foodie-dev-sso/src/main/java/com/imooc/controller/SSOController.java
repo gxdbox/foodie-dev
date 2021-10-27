@@ -178,4 +178,30 @@ public class SSOController {
         return cookieValue;
     }
 
+    @PostMapping("/logout")
+    @ResponseBody
+    public IMOOCJSONResult logout(String userId,
+                       HttpServletRequest request,
+                       HttpServletResponse response){
+        //1 0. 获取CAS中的用户门票
+        String userTicket = getCookie(request, REDIS_USER_COOKIE);
+        delCookie(response,REDIS_USER_COOKIE);
+
+        // 2 清除redis的userTicket
+        redisOperator.del(REDIS_USER_TICKET + ":" + userTicket);
+
+        //3 清除redis userToken
+        redisOperator.del(REDIS_USER_TOKEN + ":" + userId);
+        return IMOOCJSONResult.ok();
+    }
+
+    private void delCookie(HttpServletResponse response, String redisUserCookie) {
+        Cookie cookie = new Cookie(redisUserCookie, null);
+        cookie.setDomain("localhost");
+        cookie.setPath("/");
+        cookie.setMaxAge(-1);
+        response.addCookie(cookie);
+    }
+
+
 }
