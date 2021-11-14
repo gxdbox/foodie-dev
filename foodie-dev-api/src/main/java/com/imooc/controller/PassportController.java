@@ -22,35 +22,35 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("passport")
-public class PassportController extends BaseController{
+public class PassportController extends BaseController {
     @Autowired
     private UsersService usersService;
     @Autowired
-    private RedisOperator   redisOperator;
+    private RedisOperator redisOperator;
 
     final static Logger logger = LoggerFactory.getLogger(PassportController.class);
 
-    @ApiOperation(value = "用户名是否已存在" , notes = "用户名是否已存在", httpMethod = "GET")
+    @ApiOperation(value = "用户名是否已存在", notes = "用户名是否已存在", httpMethod = "GET")
     @GetMapping(value = "/usernameIsExist")
-    public IMOOCJSONResult usernameIsExist(@RequestParam String username)  {
-        if (StringUtils.isBlank(username)){
+    public IMOOCJSONResult usernameIsExist(@RequestParam String username) {
+        if (StringUtils.isBlank(username)) {
             return IMOOCJSONResult.errorMsg("username不能为空");
         }
 
         boolean isExist = usersService.queryUserIsExist(username);
 
-        if (isExist){
+        if (isExist) {
             return IMOOCJSONResult.errorMsg("username已经存在");
         }
 
         return IMOOCJSONResult.ok();
     }
 
-    @ApiOperation(value = "用户注册",notes = "用户注册",httpMethod = "POST")
-    @PostMapping ("/regist")
+    @ApiOperation(value = "用户注册", notes = "用户注册", httpMethod = "POST")
+    @PostMapping("/regist")
     public IMOOCJSONResult createUser(@RequestBody UserBO userBO,
                                       HttpServletRequest request,
-                                      HttpServletResponse response){
+                                      HttpServletResponse response) {
         String username = userBO.getUsername();
         String password = userBO.getPassword();
         String repassword = userBO.getConfirmPassword();
@@ -58,53 +58,53 @@ public class PassportController extends BaseController{
         //1、判空，参数不能为空
         if (StringUtils.isBlank(password) ||
                 StringUtils.isBlank(repassword) ||
-                StringUtils.isBlank(username) ){
+                StringUtils.isBlank(username)) {
             return IMOOCJSONResult.errorMsg("用户名或密码不能为空");
         }
 
         //2、密码长度不能小于6位
-        if (password.length()<6){
+        if (password.length() < 6) {
             return IMOOCJSONResult.errorMsg("密码长度不能小于6位");
         }
 
         //3、查询用户名是否存在
         boolean isExist = usersService.queryUserIsExist(username);
-        if (isExist){
+        if (isExist) {
             return IMOOCJSONResult.errorMsg("username已经存在");
         }
         //4、两次密码不一致
-        if (!password.equals(repassword)){
+        if (!password.equals(repassword)) {
             return IMOOCJSONResult.errorMsg("两次输入的密码不一致");
         }
         //5、创建用户
         Users user = usersService.createUser(userBO);
         UsersVO usersVO = conventUserVO(user);
-        CookieUtils.setCookie(request,response,"user",JsonUtils.objectToJson(usersVO),true);
+        CookieUtils.setCookie(request, response, "user", JsonUtils.objectToJson(usersVO), true);
 
         synShopcartData(request, response, user.getId());
         return IMOOCJSONResult.ok(user);
     }
 
 
-    @ApiOperation(value = "用户登录",notes = "用户登录",httpMethod = "POST")
+    @ApiOperation(value = "用户登录", notes = "用户登录", httpMethod = "POST")
     @PostMapping("/login")
     public IMOOCJSONResult queryUserForLogin(@RequestBody UserBO userBO,
-                                 HttpServletRequest request,
-                                 HttpServletResponse response) throws Exception {
+                                             HttpServletRequest request,
+                                             HttpServletResponse response) throws Exception {
 
 
-        if (StringUtils.isBlank(userBO.getUsername()) || StringUtils.isBlank(userBO.getPassword())){
+        if (StringUtils.isBlank(userBO.getUsername()) || StringUtils.isBlank(userBO.getPassword())) {
             return IMOOCJSONResult.errorMsg("用户名或密码不能为空");
         }
 
         Users userResult = usersService.queryUserForLogin(userBO.getUsername(), MD5Utils.getMD5Str(userBO.getPassword()));
 
-        if (userResult == null){
+        if (userResult == null) {
             return IMOOCJSONResult.errorMsg("用户名或密码错误");
         }
 //        userResult = setNullProperty(userResult);
         UsersVO usersVO = conventUserVO(userResult);
-        CookieUtils.setCookie(request,response,"user",JsonUtils.objectToJson(usersVO),true);
+        CookieUtils.setCookie(request, response, "user", JsonUtils.objectToJson(usersVO), true);
 
         synShopcartData(request, response, userResult.getId());
 
@@ -113,6 +113,7 @@ public class PassportController extends BaseController{
 
     /**
      * 注册登录成功后，同步cookie和redis中的购物车数据
+     *
      * @param request
      * @param response
      */
@@ -120,8 +121,8 @@ public class PassportController extends BaseController{
         String shopcartJsonRedis = redisOperator.get(FOODIE_SHOPCART + ":" + userId);
         String shopcartCookie = CookieUtils.getCookieValue(request, FOODIE_SHOPCART, true);
         List<ShopcartBO> pendingDeleteList = new ArrayList<>();
-        if (StringUtils.isNotBlank(shopcartJsonRedis)){
-            if (StringUtils.isNotBlank(shopcartCookie)){
+        if (StringUtils.isNotBlank(shopcartJsonRedis)) {
+            if (StringUtils.isNotBlank(shopcartCookie)) {
                 List<ShopcartBO> shopcartCookieList = JsonUtils.jsonToList(shopcartCookie, ShopcartBO.class);
                 List<ShopcartBO> shopcartRedisList = JsonUtils.jsonToList(shopcartJsonRedis, ShopcartBO.class);
 
@@ -129,7 +130,7 @@ public class PassportController extends BaseController{
                     String redisSpecId = redisShopcart.getSpecId();
                     for (ShopcartBO cookieShopcart : shopcartCookieList) {
                         String cookieSpecId = cookieShopcart.getSpecId();
-                        if (redisSpecId.equals(cookieSpecId)){
+                        if (redisSpecId.equals(cookieSpecId)) {
                             // 覆盖购买数量，不累加，参考京东
                             redisShopcart.setBuyCounts(cookieShopcart.getBuyCounts());
                             // 把cookieShopcart放入待删除列表，用于最后的删除与合并
@@ -146,22 +147,22 @@ public class PassportController extends BaseController{
                 CookieUtils.setCookie(request, response, FOODIE_SHOPCART, JsonUtils.objectToJson(shopcartRedisList), true);
                 redisOperator.set(FOODIE_SHOPCART + ":" + userId, JsonUtils.objectToJson(shopcartRedisList));
 
-            }else {
+            } else {
                 CookieUtils.setCookie(request, response, FOODIE_SHOPCART, shopcartJsonRedis, true);
             }
-        }else {
+        } else {
             redisOperator.set(FOODIE_SHOPCART + ":" + userId, shopcartCookie);
         }
     }
 
-    @ApiOperation(value = "用户退出",notes = "用户退出",httpMethod = "POST")
+    @ApiOperation(value = "用户退出", notes = "用户退出", httpMethod = "POST")
     @PostMapping("/logout")
     public IMOOCJSONResult logout(HttpServletRequest request,
                                   HttpServletResponse response,
                                   String userId) throws Exception {
-        CookieUtils.deleteCookie(request,response,"user");
-        redisOperator.del(REDIS_USER_TOKEN+":"+userId);
-        CookieUtils.deleteCookie(request,response,FOODIE_SHOPCART);
+        CookieUtils.deleteCookie(request, response, "user");
+        redisOperator.del(REDIS_USER_TOKEN + ":" + userId);
+        CookieUtils.deleteCookie(request, response, FOODIE_SHOPCART);
         return IMOOCJSONResult.ok();
     }
 

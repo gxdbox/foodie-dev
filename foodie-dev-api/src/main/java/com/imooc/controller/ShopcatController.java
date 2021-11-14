@@ -20,7 +20,7 @@ import java.util.List;
 @Api(value = "购物车接口controller", tags = {"购物车接口相关的api"})
 @RequestMapping("shopcart")
 @RestController
-public class ShopcatController extends BaseController{
+public class ShopcatController extends BaseController {
     @Autowired
     private RedisOperator redisOperator;
 
@@ -29,30 +29,30 @@ public class ShopcatController extends BaseController{
     public IMOOCJSONResult add(@RequestParam String userId,
                                @RequestBody ShopcartBO shopcartBO,
                                HttpServletRequest request,
-                               HttpServletResponse response ){
-        if (StringUtils.isBlank(userId)){
+                               HttpServletResponse response) {
+        if (StringUtils.isBlank(userId)) {
             IMOOCJSONResult.errorMsg("");
         }
 
         List<ShopcartBO> shopcartList = null;
         String shopcartJson = redisOperator.get(FOODIE_SHOPCART + ":" + userId);
-        if (StringUtils.isNotBlank(shopcartJson)){
+        if (StringUtils.isNotBlank(shopcartJson)) {
             // redis中已经有购物车了
             shopcartList = JsonUtils.jsonToList(shopcartJson, ShopcartBO.class);
             // 判断购物车中是否存在已有商品，如果有的话counts累加
             Boolean isHaving = false;
             for (ShopcartBO sc : shopcartList) {
                 String tmpSpecId = sc.getSpecId();
-                if (tmpSpecId.equals(shopcartBO.getSpecId())){
+                if (tmpSpecId.equals(shopcartBO.getSpecId())) {
                     sc.setBuyCounts(sc.getBuyCounts() + shopcartBO.getBuyCounts());
                     isHaving = true;
                 }
             }
-            if (!isHaving){
+            if (!isHaving) {
                 shopcartList.add(shopcartBO);
             }
 
-        }else {
+        } else {
             // redis中没有购物车
             shopcartList = new ArrayList<>();
             shopcartList.add(shopcartBO);
@@ -67,23 +67,23 @@ public class ShopcatController extends BaseController{
     public IMOOCJSONResult add(@RequestParam String userId,
                                @RequestParam String itemSpecId,
                                HttpServletRequest request,
-                               HttpServletResponse response ){
-        if (StringUtils.isBlank(userId) || StringUtils.isBlank(itemSpecId)){
+                               HttpServletResponse response) {
+        if (StringUtils.isBlank(userId) || StringUtils.isBlank(itemSpecId)) {
             IMOOCJSONResult.errorMsg("");
         }
 
         String shopcartRedis = redisOperator.get(FOODIE_SHOPCART + ":" + userId);
-        if (StringUtils.isNotBlank(shopcartRedis)){
+        if (StringUtils.isNotBlank(shopcartRedis)) {
             List<ShopcartBO> shopcartList = JsonUtils.jsonToList(shopcartRedis, ShopcartBO.class);
 
             for (ShopcartBO shopcartBO : shopcartList) {
-                if (itemSpecId.equals(shopcartBO.getSpecId())){
+                if (itemSpecId.equals(shopcartBO.getSpecId())) {
                     shopcartList.remove(shopcartBO);
                     break;
                 }
             }
 
-            redisOperator.set(FOODIE_SHOPCART + ":" + userId,JsonUtils.objectToJson(shopcartList));
+            redisOperator.set(FOODIE_SHOPCART + ":" + userId, JsonUtils.objectToJson(shopcartList));
         }
 
         return IMOOCJSONResult.ok();

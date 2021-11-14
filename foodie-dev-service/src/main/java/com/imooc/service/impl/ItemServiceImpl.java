@@ -48,7 +48,7 @@ public class ItemServiceImpl implements ItemService {
     public List<ItemsImg> queryItemImgById(String id) {
         Example example = new Example(ItemsImg.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("itemId",id);
+        criteria.andEqualTo("itemId", id);
         List<ItemsImg> itemsImgs = itemsImgMapper.selectByExample(example);
         return itemsImgs;
     }
@@ -60,7 +60,7 @@ public class ItemServiceImpl implements ItemService {
         itemsImg.setItemId(itemId);
         itemsImg.setIsMain(YesOrNoEnum.YES.type);
         ItemsImg result = itemsImgMapper.selectOne(itemsImg);
-        return result != null ? result.getUrl():"";
+        return result != null ? result.getUrl() : "";
     }
 
     @Transactional(propagation = Propagation.SUPPORTS)
@@ -68,7 +68,7 @@ public class ItemServiceImpl implements ItemService {
     public List<ItemsSpec> queryItemSpecById(String id) {
         Example example = new Example(ItemsSpec.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("itemId",id);
+        criteria.andEqualTo("itemId", id);
         List<ItemsSpec> itemsSpecs = itemsSpecMapper.selectByExample(example);
         return itemsSpecs;
     }
@@ -84,10 +84,11 @@ public class ItemServiceImpl implements ItemService {
     public ItemsParam queryItemsParamById(String id) {
         Example example = new Example(ItemsParam.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("itemId",id);
+        criteria.andEqualTo("itemId", id);
         ItemsParam itemsParam = itemsParamMapper.selectOneByExample(example);
         return itemsParam;
     }
+
     @Transactional(propagation = Propagation.SUPPORTS)
     @Override
     public CommentLevelCountVO queryCommentLevelCount(String itemId) {
@@ -102,6 +103,7 @@ public class ItemServiceImpl implements ItemService {
         commentLevelCountVO.setTotalCounts(totalCommentCount);
         return commentLevelCountVO;
     }
+
     @Transactional(propagation = Propagation.SUPPORTS)
     @Override
     public PagedGridResult queryItemComment(String itemId, Integer level, Integer page, Integer pageSize) {
@@ -121,42 +123,44 @@ public class ItemServiceImpl implements ItemService {
         }
         return setterGrid(page, list);
     }
+
     @Transactional(propagation = Propagation.SUPPORTS)
     @Override
     public PagedGridResult search(String itemName, String sort, Integer page, Integer size) {
         HashMap<String, Object> map = new HashMap<>();
-        map.put("keywords",itemName);
-        map.put("sort",sort);
-        PageHelper.startPage(page,size);
+        map.put("keywords", itemName);
+        map.put("sort", sort);
+        PageHelper.startPage(page, size);
         List<SearchItemVO> list = itemsMapperCustom.search(map);
 
-        return setterGrid(page,list);
+        return setterGrid(page, list);
     }
 
     @Transactional(propagation = Propagation.SUPPORTS)
     @Override
     public PagedGridResult searchByCat(Integer catId, String sort, Integer page, Integer size) {
         HashMap<String, Object> map = new HashMap<>();
-        map.put("catId",catId);
-        map.put("sort",sort);
-        PageHelper.startPage(page,size);
+        map.put("catId", catId);
+        map.put("sort", sort);
+        PageHelper.startPage(page, size);
         List<SearchItemVO> list = itemsMapperCustom.searchByCat(map);
 
-        return setterGrid(page,list);
+        return setterGrid(page, list);
     }
 
     @Override
     public List<ShopcartVO> queryItemBySpecId(String specIds) {
         String ids[] = specIds.split(",");
         List<String> specIdList = new ArrayList<>();
-        Collections.addAll(specIdList,ids);
+        Collections.addAll(specIdList, ids);
         return itemsMapperCustom.queryItemsBySpecIds(specIdList);
     }
+
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public void decreaseItemStock(String specId, int buyCounts) {
         int i = itemsMapperCustom.decreaseItemStock(specId, buyCounts);
-        if (i != 1){
+        if (i != 1) {
             throw new RuntimeException("创建订单失败");
         }
     }
@@ -175,7 +179,7 @@ public class ItemServiceImpl implements ItemService {
     private int getItemCommentsCount(String itemId, Integer level) {
         ItemsComments itemsComments = new ItemsComments();
         itemsComments.setItemId(itemId);
-        if (level != null){
+        if (level != null) {
             itemsComments.setCommentLevel(level);
         }
         return itemsCommentsMapper.selectCount(itemsComments);

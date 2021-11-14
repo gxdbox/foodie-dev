@@ -7,6 +7,7 @@ import com.imooc.utils.PagedGridResult;
 public interface MyOrderService {
     /**
      * 查询我的订单列表
+     *
      * @param userId
      * @param orderStatus
      * @param currentPage
@@ -20,6 +21,7 @@ public interface MyOrderService {
 
     /**
      * 确认收货
+     *
      * @param orderId
      * @return
      */
@@ -27,15 +29,17 @@ public interface MyOrderService {
 
     /**
      * 确认用户id是否与订单关联
+     *
      * @param userId
      * @param orderId
      * @return
      */
-    public Orders queryMyOrder(String userId,String orderId);
+    public Orders queryMyOrder(String userId, String orderId);
 
 
     /**
      * 删除订单（逻辑删除）
+     *
      * @param userId
      * @param orderId
      * @return
@@ -44,6 +48,7 @@ public interface MyOrderService {
 
     /**
      * 用户中信，查询订单状态数量
+     *
      * @param userId
      * @return
      */
@@ -51,6 +56,7 @@ public interface MyOrderService {
 
     /**
      * 获得分页的订单动向
+     *
      * @param userId
      * @param page
      * @param pageSize

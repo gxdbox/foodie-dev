@@ -39,65 +39,65 @@ public class IndexController {
     private RedisOperator redisOperator;
 
     @GetMapping("/carousel")
-    @ApiOperation(value = "轮播图" , notes = "轮播图", httpMethod = "GET")
-    public IMOOCJSONResult queryAll(){
+    @ApiOperation(value = "轮播图", notes = "轮播图", httpMethod = "GET")
+    public IMOOCJSONResult queryAll() {
         String carousel = redisOperator.get("carousel");
         List<Carousel> list = new ArrayList<>();
-        if (StringUtils.isBlank(carousel)){
+        if (StringUtils.isBlank(carousel)) {
             list = carouselService.querryAll(YesOrNoEnum.YES.type);
             redisOperator.set("carousel", JsonUtils.objectToJson(list));
-        }else {
+        } else {
             list = JsonUtils.jsonToList(carousel, Carousel.class);
         }
         return IMOOCJSONResult.ok(list);
     }
 
     @GetMapping("/cats")
-    @ApiOperation(value = "获取商品分类（一级分类）" , notes = "获取商品分类（一级分类）", httpMethod = "GET")
-    public IMOOCJSONResult queryAllRootLevelCat(){
+    @ApiOperation(value = "获取商品分类（一级分类）", notes = "获取商品分类（一级分类）", httpMethod = "GET")
+    public IMOOCJSONResult queryAllRootLevelCat() {
         String cats = redisOperator.get("cats");
         List<Category> list = new ArrayList<>();
-        if (null == cats || StringUtils.isBlank(cats)){
+        if (null == cats || StringUtils.isBlank(cats)) {
             list = categoryService.queryAllRootLevelCat(CategoryEnum.One.type);
-            redisOperator.set("cats",JsonUtils.objectToJson(list));
-        }else {
-            list = JsonUtils.jsonToList(cats,Category.class);
+            redisOperator.set("cats", JsonUtils.objectToJson(list));
+        } else {
+            list = JsonUtils.jsonToList(cats, Category.class);
         }
         return IMOOCJSONResult.ok(list);
     }
 
     @GetMapping("/subCat/{rootCatId}")
-    @ApiOperation(value = "获取商品子分类（二级分类三级分类）" , notes = "获取商品子分类（二级分类三级分类", httpMethod = "GET")
+    @ApiOperation(value = "获取商品子分类（二级分类三级分类）", notes = "获取商品子分类（二级分类三级分类", httpMethod = "GET")
     public IMOOCJSONResult querySubCat(
-            @ApiParam(name = "rootCatId",value = "一级分类id",required = true)
-            @PathVariable Integer rootCatId){
-        if (rootCatId  == null){
+            @ApiParam(name = "rootCatId", value = "一级分类id", required = true)
+            @PathVariable Integer rootCatId) {
+        if (rootCatId == null) {
             return IMOOCJSONResult.errorMsg("商品分类不存在");
         }
         List<CategoryVO> list = new ArrayList<>();
         String subCatStr = redisOperator.get("subCat:" + rootCatId);
-        if (StringUtils.isBlank(subCatStr)){
+        if (StringUtils.isBlank(subCatStr)) {
             list = categoryService.getSubCatList(rootCatId);
 
-            if(list != null && list.size() > 0){
-                redisOperator.set("subCat:"+rootCatId,JsonUtils.objectToJson(list));
-            }else {
-                redisOperator.set("subCat:"+rootCatId,JsonUtils.objectToJson(list),5*60);
+            if (list != null && list.size() > 0) {
+                redisOperator.set("subCat:" + rootCatId, JsonUtils.objectToJson(list));
+            } else {
+                redisOperator.set("subCat:" + rootCatId, JsonUtils.objectToJson(list), 5 * 60);
             }
 
-        }else {
-            list = JsonUtils.jsonToList(subCatStr,CategoryVO.class);
+        } else {
+            list = JsonUtils.jsonToList(subCatStr, CategoryVO.class);
         }
 
         return IMOOCJSONResult.ok(list);
     }
 
     @GetMapping("/sixNewItems/{rootCatId}")
-    @ApiOperation(value = "查询每个一级分类下的最新6条商品数据" , notes = "查询每个一级分类下的最新6条商品数据", httpMethod = "GET")
+    @ApiOperation(value = "查询每个一级分类下的最新6条商品数据", notes = "查询每个一级分类下的最新6条商品数据", httpMethod = "GET")
     public IMOOCJSONResult sixNewItems(
-            @ApiParam(name = "rootCatId",value = "一级分类id",required = true)
-            @PathVariable Integer rootCatId){
-        if (rootCatId  == null){
+            @ApiParam(name = "rootCatId", value = "一级分类id", required = true)
+            @PathVariable Integer rootCatId) {
+        if (rootCatId == null) {
             return IMOOCJSONResult.errorMsg("商品分类不存在");
         }
         List<NewItemsVO> sixItem = categoryService.getSixNewItemsLazy(rootCatId);

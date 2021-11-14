@@ -33,7 +33,7 @@ public class MyCommentController extends BaseController {
             @RequestParam String userId,
             @ApiParam(name = "orderId", value = "订单id", required = true)
             @RequestParam String orderId
-            ) {
+    ) {
         IMOOCJSONResult checkResult = checkUserOrder(userId, orderId);
         if (checkResult.getStatus() != HttpStatus.OK.value()) {
             return checkResult;
@@ -41,11 +41,11 @@ public class MyCommentController extends BaseController {
 
         Orders order = (Orders) checkResult.getData();
 
-        if (order == null){
+        if (order == null) {
             return IMOOCJSONResult.errorMsg("订单不存在");
         }
 
-        if (order.getIsComment() == YesOrNoEnum.YES.type){
+        if (order.getIsComment() == YesOrNoEnum.YES.type) {
             IMOOCJSONResult.errorMsg("订单已经评价");
         }
         List<OrderItems> list = myCommentService.queryPendingComments(orderId);
@@ -61,18 +61,18 @@ public class MyCommentController extends BaseController {
             @ApiParam(name = "orderId", value = "订单id", required = true)
             @RequestParam String orderId,
             @RequestBody List<OrderItemsCommentBO> list
-            ) {
+    ) {
         System.out.println(list);
         IMOOCJSONResult checkResult = checkUserOrder(userId, orderId);
         if (checkResult.getStatus() != HttpStatus.OK.value()) {
             return checkResult;
         }
 
-        if (list == null || list.size()==0 || list.isEmpty()){
+        if (list == null || list.size() == 0 || list.isEmpty()) {
             return IMOOCJSONResult.errorMsg("商品评论不能为空");
         }
 
-        myCommentService.saveComments(userId,orderId,list);
+        myCommentService.saveComments(userId, orderId, list);
 
         return IMOOCJSONResult.ok(list);
     }

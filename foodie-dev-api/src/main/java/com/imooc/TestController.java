@@ -17,24 +17,24 @@ public class TestController {
     private RedisOperator redisOperator;
 
     @GetMapping("get")
-    public String  get(String key){
+    public String get(String key) {
         return (String) redisOperator.get(key);
     }
 
     @GetMapping("set")
-    public String  set(String key,String  value){
-        redisOperator.set(key,value);
+    public String set(String key, String value) {
+        redisOperator.set(key, value);
         return "ok";
     }
 
     @GetMapping("del")
-    public String  del(String key){
+    public String del(String key) {
         redisOperator.del(key);
         return "ok";
     }
 
     @GetMapping("getAlot")
-    public List<String>  getAlot(String... keys){
+    public List<String> getAlot(String... keys) {
         List<String> stringList = new ArrayList<>();
         for (String key : keys) {
             stringList.add(redisOperator.get(key));
@@ -43,7 +43,7 @@ public class TestController {
     }
 
     @GetMapping("mget")
-    public List<String>  mget(String... keys){
+    public List<String> mget(String... keys) {
         List<String> list = Arrays.asList(keys);
         return redisOperator.mget(list);
     }

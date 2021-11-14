@@ -10,7 +10,7 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-@Api(value = "用户中心",tags = "用户中心相关接口")
+@Api(value = "用户中心", tags = "用户中心相关接口")
 @RestController
 @RequestMapping("center")
 public class CenterController {
@@ -20,10 +20,10 @@ public class CenterController {
     private MyOrderService myOrderService;
 
     @GetMapping("userInfo")
-    @ApiOperation(value = "获取用户信息",tags = "查询用户中心",httpMethod = "GET")
+    @ApiOperation(value = "获取用户信息", tags = "查询用户中心", httpMethod = "GET")
     public IMOOCJSONResult userInfo(
-            @ApiParam(name = "userId",value = "用户id",required = true)
-            @RequestParam("userId") String userId){
+            @ApiParam(name = "userId", value = "用户id", required = true)
+            @RequestParam("userId") String userId) {
 
         Users users = centerUserService.queryUserInfo(userId);
         return IMOOCJSONResult.ok(users);

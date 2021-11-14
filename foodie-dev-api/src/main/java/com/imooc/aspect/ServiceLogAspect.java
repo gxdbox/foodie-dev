@@ -15,7 +15,7 @@ public class ServiceLogAspect {
 
     @Around("execution(* com.imooc.service.impl..*.*(..))")
     public Object recordTime(ProceedingJoinPoint joinPoint) throws Throwable {
-        logger.info("========= 开始执行 {}.{} ========",joinPoint.getTarget().getClass(),joinPoint.getSignature().getName());
+        logger.info("========= 开始执行 {}.{} ========", joinPoint.getTarget().getClass(), joinPoint.getSignature().getName());
 
         long startTime = System.currentTimeMillis();
 
@@ -25,12 +25,12 @@ public class ServiceLogAspect {
 
         long takeTime = endTime - startTime;
 
-        if (takeTime > 3000){
-            logger.error("执行结束，花费时长{}毫秒",takeTime);
-        }else if (takeTime >2000){
-            logger.warn("执行结束，耗费时间{}毫秒",takeTime);
-        }else {
-            logger.info("执行结束，耗费时间{}毫秒",takeTime);
+        if (takeTime > 3000) {
+            logger.error("执行结束，花费时长{}毫秒", takeTime);
+        } else if (takeTime > 2000) {
+            logger.warn("执行结束，耗费时间{}毫秒", takeTime);
+        } else {
+            logger.info("执行结束，耗费时间{}毫秒", takeTime);
         }
         return result;
     }

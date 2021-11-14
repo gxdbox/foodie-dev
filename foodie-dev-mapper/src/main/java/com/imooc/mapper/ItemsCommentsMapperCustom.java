@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface ItemsCommentsMapperCustom extends MyMapper<ItemsComments> {
-    void saveComments(Map<String,Object> paramsMap);
-    public List<MyCommentVO> queryMyComments(@Param("paramsMap")Map<String,Object> map);
+    void saveComments(Map<String, Object> paramsMap);
+
+    public List<MyCommentVO> queryMyComments(@Param("paramsMap") Map<String, Object> map);
 }

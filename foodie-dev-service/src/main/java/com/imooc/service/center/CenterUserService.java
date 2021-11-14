@@ -7,6 +7,7 @@ import io.swagger.models.auth.In;
 public interface CenterUserService {
     /**
      * 根据userId查询用户信息
+     *
      * @param userId
      * @return
      */

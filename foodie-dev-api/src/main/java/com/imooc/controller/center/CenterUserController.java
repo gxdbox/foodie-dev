@@ -98,7 +98,7 @@ public class CenterUserController extends BaseController {
                     e.printStackTrace();
                 }
             }
-        }else {
+        } else {
             return IMOOCJSONResult.errorMsg("文件不能为空！");
         }
 

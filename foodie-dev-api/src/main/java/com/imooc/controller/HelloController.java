@@ -27,9 +27,9 @@ public class HelloController {
 
 
     @GetMapping("/setSession")
-    public Object setSession(HttpServletRequest request){
+    public Object setSession(HttpServletRequest request) {
         HttpSession session = request.getSession();
-        session.setAttribute("userinfo","new user");
+        session.setAttribute("userinfo", "new user");
         session.setMaxInactiveInterval(3600);
         session.getAttribute("userinfo");
         return "ok";

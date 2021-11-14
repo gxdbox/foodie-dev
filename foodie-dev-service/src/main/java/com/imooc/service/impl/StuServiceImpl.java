@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class StuServiceImpl implements StuService {
     @Autowired
     private StuMapper stuMapper;
+
     @Override
     public Stu getInfo(Integer id) {
         return stuMapper.selectByPrimaryKey(id);
@@ -32,7 +33,7 @@ public class StuServiceImpl implements StuService {
 
     }
 
-//    @Transactional(propagation = Propagation.REQUIRED)
+    //    @Transactional(propagation = Propagation.REQUIRED)
     public void saveParent() {
         Stu stu = new Stu();
         stu.setName("parent");
@@ -40,7 +41,7 @@ public class StuServiceImpl implements StuService {
         stuMapper.insert(stu);
     }
 
-//    @Transactional(propagation = Propagation.REQUIRED)
+    //    @Transactional(propagation = Propagation.REQUIRED)
     public void saveChildren() {
         saveChild1();
         int a = 1 / 0;

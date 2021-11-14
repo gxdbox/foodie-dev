@@ -12,7 +12,7 @@ public class OrderJob {
     private OrdersService ordersService;
 
     @Scheduled(cron = "0/3 * * * * ?")
-    public void autoCloseOrder(){
+    public void autoCloseOrder() {
 //        ordersService.closeOrder();
 //        System.out.println("执行定时任务："+ DateUtil.getCurrentDateString(DateUtil.DATETIME_PATTERN));
     }

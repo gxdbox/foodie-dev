@@ -16,6 +16,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import java.util.Date;
 import java.util.List;
+
 @Service
 public class AddressServiceImpl implements AddressService {
     @Autowired
@@ -29,12 +30,12 @@ public class AddressServiceImpl implements AddressService {
         List<UserAddress> userAddresses = this.queryAddressByUserId(addressBO.getUserId());
         Integer isDefault = 0;
 
-        if (userAddresses == null || userAddresses.isEmpty() || userAddresses.size() == 0){
+        if (userAddresses == null || userAddresses.isEmpty() || userAddresses.size() == 0) {
             isDefault = 1;
         }
 
         UserAddress userAddress = new UserAddress();
-        BeanUtils.copyProperties(addressBO,userAddress);
+        BeanUtils.copyProperties(addressBO, userAddress);
         String addressId = sid.nextShort();
 
         userAddress.setId(addressId);
@@ -50,7 +51,7 @@ public class AddressServiceImpl implements AddressService {
     public List<UserAddress> queryAddressByUserId(String userId) {
         Example example = new Example(UserAddress.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("userId",userId);
+        criteria.andEqualTo("userId", userId);
         return userAddressMapper.selectByExample(example);
     }
 
@@ -58,7 +59,7 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public void update(AddressBO addressBO) {
         UserAddress userAddress = new UserAddress();
-        BeanUtils.copyProperties(addressBO,userAddress);
+        BeanUtils.copyProperties(addressBO, userAddress);
         userAddress.setId(addressBO.getAddressId());
         userAddress.setUpdatedTime(new Date());
 
@@ -68,7 +69,7 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public String delete(String addressId) {
         UserAddress userAddress = userAddressMapper.selectByPrimaryKey(addressId);
-        if (userAddress.getIsDefault() == 1){
+        if (userAddress.getIsDefault() == 1) {
             return "默认地址不能删除";
         }
 
@@ -77,10 +78,10 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    public void setDefalut(String addressId,String userId) {
+    public void setDefalut(String addressId, String userId) {
         List<UserAddress> userAddresses = this.queryAddressByUserId(userId);
         for (UserAddress userAddress : userAddresses) {
-            if (userAddress.getIsDefault() == 1){
+            if (userAddress.getIsDefault() == 1) {
                 userAddress.setIsDefault(0);
                 userAddressMapper.updateByPrimaryKeySelective(userAddress);
             }
@@ -99,8 +100,8 @@ public class AddressServiceImpl implements AddressService {
     public UserAddress queryUserAddress(String addressId, String userId) {
         Example example = new Example(UserAddress.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("userId",userId);
-        criteria.andEqualTo("id",addressId);
+        criteria.andEqualTo("userId", userId);
+        criteria.andEqualTo("id", addressId);
         return userAddressMapper.selectOneByExample(example);
     }
 }

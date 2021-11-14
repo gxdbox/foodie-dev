@@ -1,4 +1,5 @@
 package com.imooc.service.impl;
+
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -43,7 +44,7 @@ public class OrdersServiceImpl implements OrdersService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public Orders create(List<ShopcartBO> shopcartList,SubmitOrderBO submitOrderBO) {
+    public Orders create(List<ShopcartBO> shopcartList, SubmitOrderBO submitOrderBO) {
         Integer payMethod = submitOrderBO.getPayMethod();
         String addressId = submitOrderBO.getAddressId();
         String itemSpecIds = submitOrderBO.getItemSpecIds();
@@ -68,7 +69,6 @@ public class OrdersServiceImpl implements OrdersService {
                 + address.getDetail());
 
 
-
         orders.setPostAmount(postAccount);
         orders.setPayMethod(payMethod);
         orders.setLeftMsg(leftMsg);
@@ -79,22 +79,21 @@ public class OrdersServiceImpl implements OrdersService {
         orders.setUpdatedTime(new Date());
 
 
-
         //2、根据itemSpecIds保存规格表
         String itemSpecId[] = itemSpecIds.split(",");
         Integer totalAmmount = 0;
         Integer realAmmount = 0;
-        List<ShopcartBO> beRemovedShopcartList  = new ArrayList<>();
+        List<ShopcartBO> beRemovedShopcartList = new ArrayList<>();
         for (String specId : itemSpecId) {
             // TODO 整合redis后，商品购买的数量重新从redis的购物车中获取
-            ShopcartBO shopcartBO = getShopcartCountFromRedis(specId,shopcartList);
+            ShopcartBO shopcartBO = getShopcartCountFromRedis(specId, shopcartList);
             int buyCounts = shopcartBO.getBuyCounts();
             beRemovedShopcartList.add(shopcartBO);
 
             // 2.1 根据规格id，查询规格的具体信息，主要获取价格
             ItemsSpec itemsSpec = itemService.queryItemSpecBySpecId(specId);
-            totalAmmount += itemsSpec.getPriceDiscount()*buyCounts;
-            realAmmount +=itemsSpec.getPriceDiscount()*buyCounts;
+            totalAmmount += itemsSpec.getPriceDiscount() * buyCounts;
+            realAmmount += itemsSpec.getPriceDiscount() * buyCounts;
 
             // 2.2 根据商品id，获得商品信息以及商品图片
             String itemId = itemsSpec.getItemId();
@@ -138,7 +137,7 @@ public class OrdersServiceImpl implements OrdersService {
 
     private ShopcartBO getShopcartCountFromRedis(String specId, List<ShopcartBO> shopcartList) {
         for (ShopcartBO shopcartBO : shopcartList) {
-            if (specId.equals(shopcartBO.getSpecId())){
+            if (specId.equals(shopcartBO.getSpecId())) {
                 return shopcartBO;
             }
         }
@@ -153,7 +152,7 @@ public class OrdersServiceImpl implements OrdersService {
         orderStatus.setOrderStatus(waitDeliver);
         orderStatus.setPayTime(new Date());
         int result = orderStatusMapper.updateByPrimaryKeySelective(orderStatus);
-        if (result != 1){
+        if (result != 1) {
             throw new RuntimeException("修改订单状态失败");
         }
     }
@@ -168,14 +167,14 @@ public class OrdersServiceImpl implements OrdersService {
         for (OrderStatus os : list) {
             Date createdTime = os.getCreatedTime();
             int i = DateUtil.daysBetween(createdTime, new Date());
-            if (i>=1){
+            if (i >= 1) {
                 doClose(os.getOrderId());
             }
         }
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    void doClose(String orderId){
+    void doClose(String orderId) {
         OrderStatus orderStatus = new OrderStatus();
         orderStatus.setOrderId(orderId);
         orderStatus.setOrderStatus(OrderStatusEnum.CLOSE.type);

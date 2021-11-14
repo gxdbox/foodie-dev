@@ -13,18 +13,28 @@ import java.util.List;
 
 public interface ItemService {
     Items queryItemById(String id);
+
     List<ItemsImg> queryItemImgById(String id);
+
     String queryItemImgByImgId(String itemId);
+
     List<ItemsSpec> queryItemSpecById(String id);
+
     ItemsSpec queryItemSpecBySpecId(String specId);
 
     ItemsParam queryItemsParamById(String id);
+
     CommentLevelCountVO queryCommentLevelCount(String itemId);
+
     PagedGridResult queryItemComment(String itemId, Integer level, Integer page, Integer size);
+
     PagedGridResult search(String itemName, String sort, Integer page, Integer size);
+
     PagedGridResult searchByCat(Integer catId, String sort, Integer page, Integer size);
+
     /**
      * 根据规格ids查询最新的购物车中商品数据（用于刷新渲染购物车中的商品数据）
+     *
      * @param specIds
      * @return
      */

@@ -26,7 +26,7 @@ public class BaseController {
     @Autowired
     private RedisOperator redisOperator;
 
-    public IMOOCJSONResult checkUserOrder(String userId,String orderId){
+    public IMOOCJSONResult checkUserOrder(String userId, String orderId) {
         Orders order = myOrderService.queryMyOrder(userId, orderId);
         if (order == null) {
             return IMOOCJSONResult.errorMsg("订单不存在！");
@@ -34,11 +34,11 @@ public class BaseController {
         return IMOOCJSONResult.ok(order);
     }
 
-    public UsersVO conventUserVO(Users user){
+    public UsersVO conventUserVO(Users user) {
         UsersVO usersVO = new UsersVO();
-        BeanUtils.copyProperties(user,usersVO);
+        BeanUtils.copyProperties(user, usersVO);
         String uniqueToken = UUID.randomUUID().toString();
-        redisOperator.set(REDIS_USER_TOKEN + ":" + usersVO.getId(),uniqueToken);
+        redisOperator.set(REDIS_USER_TOKEN + ":" + usersVO.getId(), uniqueToken);
         usersVO.setToken(uniqueToken);
         return usersVO;
     }

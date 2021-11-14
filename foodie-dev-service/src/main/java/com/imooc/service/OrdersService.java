@@ -11,12 +11,14 @@ import java.util.List;
 public interface OrdersService {
     /**
      * 用于创建订单
+     *
      * @param submitOrderBO
      */
     Orders create(List<ShopcartBO> shopcartList, SubmitOrderBO submitOrderBO);
 
     /**
      * 修改订单状态
+     *
      * @param orderId
      * @param waitDeliver
      */

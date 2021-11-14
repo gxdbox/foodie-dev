@@ -8,7 +8,7 @@ import org.springframework.web.multipart.MaxUploadSizeExceededException;
 @RestControllerAdvice
 public class CustomExceptionHandler {
     @ExceptionHandler(MaxUploadSizeExceededException.class)
-    public IMOOCJSONResult handlerMaxUploadFile(MaxUploadSizeExceededException error){
+    public IMOOCJSONResult handlerMaxUploadFile(MaxUploadSizeExceededException error) {
         return IMOOCJSONResult.errorMsg("图片太大，请压缩至500kb再上传");
     }
 }

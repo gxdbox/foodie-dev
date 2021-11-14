@@ -2,7 +2,7 @@ server:
   port: 8090
 
 spring:
-  datasource:                                           # 数据源的相关配置
+  datasource: # 数据源的相关配置
     url: jdbc:mysql://1.117.214.155:3306/foodie-shop-dev?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true
     password: abc123456
   redis:
@@ -10,13 +10,13 @@ spring:
     port: 6379
     host: 1.117.214.155
     password: imooc
-#    password: imooc
-#    cluster:
-#      nodes: 81.68.129.83:6379 81.68.129.83:8001 81.68.129.83:8002 81.68.220.186:6379 81.68.220.186:8003 81.68.220.186:8004
-#    password: imooc
-#    sentinel:
-#      master: mymaster
-#      nodes: 81.68.220.186:26379,81.68.129.83:26379,1.117.214.155:26379
+  #    password: imooc
+  #    cluster:
+  #      nodes: 81.68.129.83:6379 81.68.129.83:8001 81.68.129.83:8002 81.68.220.186:6379 81.68.220.186:8003 81.68.220.186:8004
+  #    password: imooc
+  #    sentinel:
+  #      master: mymaster
+  #      nodes: 81.68.220.186:26379,81.68.129.83:26379,1.117.214.155:26379
   thymeleaf:
     mode: HTML
     encoding: UTF-8

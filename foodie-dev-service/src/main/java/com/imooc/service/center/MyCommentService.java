@@ -9,8 +9,10 @@ import com.imooc.utils.PagedGridResult;
 import java.util.List;
 
 public interface MyCommentService {
-   List<OrderItems> queryPendingComments(String orderId);
-   void saveComments(String userid, String orderId, List<OrderItemsCommentBO> commentBOS);
-   PagedGridResult queryMyComments(String userId,Integer page,Integer pageSize);
+    List<OrderItems> queryPendingComments(String orderId);
+
+    void saveComments(String userid, String orderId, List<OrderItemsCommentBO> commentBOS);
+
+    PagedGridResult queryMyComments(String userId, Integer page, Integer pageSize);
 
 }

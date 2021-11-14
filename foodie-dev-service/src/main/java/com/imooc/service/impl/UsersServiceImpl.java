@@ -33,7 +33,7 @@ public class UsersServiceImpl implements UsersService {
 
         Example example = new Example(Users.class);
         Example.Criteria userCriteria = example.createCriteria();
-        userCriteria.andEqualTo("username",username);
+        userCriteria.andEqualTo("username", username);
 
         Users users = usersMapper.selectOneByExample(example);
         return users == null ? false : true;
@@ -68,14 +68,15 @@ public class UsersServiceImpl implements UsersService {
 
         return user;
     }
+
     @Transactional(propagation = Propagation.SUPPORTS)
     @Override
     public Users queryUserForLogin(String username, String password) {
         Example example = new Example(Users.class);
         Example.Criteria criteria = example.createCriteria();
 
-        criteria.andEqualTo("username",username);
-        criteria.andEqualTo("password",password);
+        criteria.andEqualTo("username", username);
+        criteria.andEqualTo("password", password);
         return usersMapper.selectOneByExample(example);
     }
 }

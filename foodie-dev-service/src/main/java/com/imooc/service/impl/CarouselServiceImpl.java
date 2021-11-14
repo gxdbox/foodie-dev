@@ -20,7 +20,7 @@ public class CarouselServiceImpl implements CarouselService {
         Example example = new Example(Carousel.class);
         example.orderBy("sort");
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("isShow",isShow);
+        criteria.andEqualTo("isShow", isShow);
 
         List<Carousel> carousels = carouselMapper.selectAll();
         return carousels;

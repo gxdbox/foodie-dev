@@ -24,7 +24,7 @@ import java.util.List;
 @Api(value = "订单相关", tags = {"订单相关的api接口"})
 @RequestMapping("/orders")
 @RestController
-public class OrdersController extends BaseController{
+public class OrdersController extends BaseController {
     @Autowired
     private OrdersService ordersService;
     @Autowired
@@ -32,11 +32,11 @@ public class OrdersController extends BaseController{
 
     @ApiOperation(value = "用户下单", notes = "用户下单", httpMethod = "POST")
     @PostMapping("/create")
-    public IMOOCJSONResult create( @RequestBody SubmitOrderBO submitOrderBO,
-                                   HttpServletRequest request,
-                                   HttpServletResponse response){
+    public IMOOCJSONResult create(@RequestBody SubmitOrderBO submitOrderBO,
+                                  HttpServletRequest request,
+                                  HttpServletResponse response) {
         if (submitOrderBO.getPayMethod() != PayEnum.WEIXIN.type &&
-                submitOrderBO.getPayMethod() !=PayEnum.ZHIFUBAO.type){
+                submitOrderBO.getPayMethod() != PayEnum.ZHIFUBAO.type) {
             return IMOOCJSONResult.errorMsg("不支持该支付方式");
         }
 
@@ -49,16 +49,16 @@ public class OrdersController extends BaseController{
         //2、删除购物车当中的商品
         List<ShopcartBO> beRemoveshopcardList = orders.getShopcartList();
         shopcartList.removeAll(beRemoveshopcardList);
-        redisOperator.set(FOODIE_SHOPCART+":"+submitOrderBO.getUserId(),
+        redisOperator.set(FOODIE_SHOPCART + ":" + submitOrderBO.getUserId(),
                 JsonUtils.objectToJson(shopcartList));
-        CookieUtils.setCookie(request,response,
-                FOODIE_SHOPCART,JsonUtils.objectToJson(shopcartList), true);
-            //3、向支付中心发起商品支付请求
+        CookieUtils.setCookie(request, response,
+                FOODIE_SHOPCART, JsonUtils.objectToJson(shopcartList), true);
+        //3、向支付中心发起商品支付请求
         return IMOOCJSONResult.ok(orders.getId());
     }
 
     @PostMapping("notifyMerchantOrderPaid")
-    public Integer notifyMerchantOrderPaid(@RequestParam String orderId){
+    public Integer notifyMerchantOrderPaid(@RequestParam String orderId) {
         ordersService.updateOrderStatus(orderId, OrderStatusEnum.WAIT_DELIVER.type);
         return HttpStatus.OK.value();
     }

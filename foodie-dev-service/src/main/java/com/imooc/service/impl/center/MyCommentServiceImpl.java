@@ -49,9 +49,9 @@ public class MyCommentServiceImpl extends BaseService implements MyCommentServic
         for (OrderItemsCommentBO oic : commentList) {
             oic.setCommentId(sid.nextShort());
         }
-        Map<String , Object> paramsMap = new HashMap<>();
-        paramsMap.put("userId",userid);
-        paramsMap.put("commentList",commentList);
+        Map<String, Object> paramsMap = new HashMap<>();
+        paramsMap.put("userId", userid);
+        paramsMap.put("commentList", commentList);
         itemsCommentsMapperCustom.saveComments(paramsMap);
 
         //2、更改订单已评论
@@ -69,11 +69,11 @@ public class MyCommentServiceImpl extends BaseService implements MyCommentServic
 
     @Override
     public PagedGridResult queryMyComments(String userId, Integer page, Integer pageSize) {
-        Map<String,Object> map = new HashMap<>();
-        map.put("userId",userId);
-        PageHelper.startPage(page,pageSize);
+        Map<String, Object> map = new HashMap<>();
+        map.put("userId", userId);
+        PageHelper.startPage(page, pageSize);
         List<MyCommentVO> list = itemsCommentsMapperCustom.queryMyComments(map);
-        return setterPagedGrid(list,page);
+        return setterPagedGrid(list, page);
     }
 
 

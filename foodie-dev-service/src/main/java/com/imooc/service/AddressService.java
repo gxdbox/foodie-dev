@@ -14,13 +14,12 @@ public interface AddressService {
 
     public String delete(String addressId);
 
-    public void setDefalut(String addressId,String userId);
+    public void setDefalut(String addressId, String userId);
 
     /**
-     *
      * @param addressId
      * @param userId
      * @return
      */
-    public UserAddress queryUserAddress(String addressId,String userId);
+    public UserAddress queryUserAddress(String addressId, String userId);
 }

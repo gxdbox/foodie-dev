@@ -14,13 +14,13 @@ public class BloomFilterTest {
                 0.001);
 
         for (int i = 0; i < 10000; i++) {
-             bf.put(String.valueOf(i));
+            bf.put(String.valueOf(i));
         }
 
         int counts = 0;
         for (int i = 0; i < 1000; i++) {
             boolean isExist = bf.mightContain("imooc" + i);
-            if (isExist){
+            if (isExist) {
                 counts++;
             }
         }

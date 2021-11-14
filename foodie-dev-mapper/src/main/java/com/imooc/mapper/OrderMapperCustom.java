@@ -10,7 +10,9 @@ import java.util.List;
 import java.util.Map;
 
 public interface OrderMapperCustom extends MyMapper<MyOrdersVO> {
-    public List<MyOrdersVO> queryMyOrders(@Param("paramsMap") Map<String,Object> map);
-    public int queryMyOrderStatusCounts(@Param("paramsMap") Map<String,Object> map);
+    public List<MyOrdersVO> queryMyOrders(@Param("paramsMap") Map<String, Object> map);
+
+    public int queryMyOrderStatusCounts(@Param("paramsMap") Map<String, Object> map);
+
     public List<OrderStatus> getMyOrderTrend(@Param("paramsMap") Map<String, Object> map);
 }

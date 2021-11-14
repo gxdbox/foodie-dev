@@ -9,7 +9,9 @@ import java.util.List;
 
 public interface CategoryService {
     List<Category> queryAllRootLevelCat(Integer type);
-    List<CategoryVO>  getSubCatList(Integer rootCatId);
+
+    List<CategoryVO> getSubCatList(Integer rootCatId);
+
     List<NewItemsVO> getSixNewItemsLazy(Integer rootCatId);
 
 }

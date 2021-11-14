@@ -34,16 +34,17 @@ public class SSOController {
     private UsersService usersService;
     @Autowired
     private RedisOperator redisOperator;
+
     @GetMapping("/login")
     public String login(String returnUrl,
                         Model model,
                         HttpServletRequest request,
                         HttpServletResponse response) {
-     model.addAttribute("returnUrl",returnUrl);
+        model.addAttribute("returnUrl", returnUrl);
 
         String userTicket = getCookie(request, REDIS_USER_COOKIE);
-        boolean isVerified =verifyUserTicket(userTicket);
-        if (isVerified){
+        boolean isVerified = verifyUserTicket(userTicket);
+        if (isVerified) {
             String tmpTicket = createTmpTicket();
             return "redirect:" + returnUrl + "?tmpTicket=" + tmpTicket;
         }
@@ -59,12 +60,12 @@ public class SSOController {
 
         // 1. 验证CAS门票是否有效
         String userId = redisOperator.get(REDIS_USER_TICKET + ":" + userTicket);
-        if (StringUtils.isBlank(userId)){
+        if (StringUtils.isBlank(userId)) {
             return false;
         }
 
         String userToken = redisOperator.get(REDIS_USER_TOKEN + ":" + userId);
-        if (StringUtils.isBlank(userToken)){
+        if (StringUtils.isBlank(userToken)) {
             return false;
         }
 
@@ -75,35 +76,35 @@ public class SSOController {
     public String doLogin(String username,
                           String password,
                           String returnUrl,
-                        Model model,
-                        HttpServletRequest request,
-                        HttpServletResponse response) throws Exception {
+                          Model model,
+                          HttpServletRequest request,
+                          HttpServletResponse response) throws Exception {
 
-        if (StringUtils.isBlank(username) || StringUtils.isBlank(password)){
-            model.addAttribute("errmsg","用户名或密码不能为空");
+        if (StringUtils.isBlank(username) || StringUtils.isBlank(password)) {
+            model.addAttribute("errmsg", "用户名或密码不能为空");
             return "login";
         }
 
         Users userResult = usersService.queryUserForLogin(username,
                 MD5Utils.getMD5Str(password));
 
-        if (userResult == null){
-            model.addAttribute("errmsg","用户名或密码错误");
+        if (userResult == null) {
+            model.addAttribute("errmsg", "用户名或密码错误");
             return "login";
         }
 
         String uniqueToken = UUID.randomUUID().toString().trim();
         UsersVO usersVO = new UsersVO();
-        BeanUtils.copyProperties(userResult,usersVO);
+        BeanUtils.copyProperties(userResult, usersVO);
         usersVO.setToken(uniqueToken);
-        redisOperator.set(REDIS_USER_TOKEN + ":" + usersVO.getId(),JsonUtils.objectToJson(usersVO));
+        redisOperator.set(REDIS_USER_TOKEN + ":" + usersVO.getId(), JsonUtils.objectToJson(usersVO));
 
         //3、
         String userTicket = UUID.randomUUID().toString().trim();
         redisOperator.set(REDIS_USER_TICKET + ":" + userTicket, userResult.getId());
 
         //3、1
-        setCookie(REDIS_USER_COOKIE,userTicket,response);
+        setCookie(REDIS_USER_COOKIE, userTicket, response);
 
         //4、
         String tmpTicket = createTmpTicket();
@@ -116,16 +117,16 @@ public class SSOController {
     private String createTmpTicket() {
         String tmpTicket = UUID.randomUUID().toString().trim();
         try {
-            redisOperator.set(REDIS_TMP_TICKET + ":" + tmpTicket,MD5Utils.getMD5Str(tmpTicket),6000);
+            redisOperator.set(REDIS_TMP_TICKET + ":" + tmpTicket, MD5Utils.getMD5Str(tmpTicket), 6000);
         } catch (Exception e) {
             e.printStackTrace();
         }
         return tmpTicket;
     }
 
-    private void setCookie(String key,String val,HttpServletResponse response){
+    private void setCookie(String key, String val, HttpServletResponse response) {
         Cookie cookie = new Cookie(key, val);
-            cookie.setDomain("localhost");
+        cookie.setDomain("localhost");
         cookie.setPath("/");
         response.addCookie(cookie);
     }
@@ -137,41 +138,41 @@ public class SSOController {
                                            HttpServletResponse response) throws Exception {
         //1、tmpTikcet
         String tmpTicketValue = redisOperator.get(REDIS_TMP_TICKET + ":" + tmpTicket);
-        if (StringUtils.isBlank(tmpTicketValue)){
+        if (StringUtils.isBlank(tmpTicketValue)) {
             return IMOOCJSONResult.errorMsg("用户票据异常");
         }
 
-        if (!tmpTicketValue.equals(MD5Utils.getMD5Str(tmpTicket))){
+        if (!tmpTicketValue.equals(MD5Utils.getMD5Str(tmpTicket))) {
             return IMOOCJSONResult.errorMsg("用户票据异常");
-        }else {
+        } else {
             redisOperator.del(REDIS_TMP_TICKET + ":" + tmpTicket);
         }
 
         //2、userTicket
-        String userTicket = getCookie(request,REDIS_USER_COOKIE);
+        String userTicket = getCookie(request, REDIS_USER_COOKIE);
         String userId = redisOperator.get(REDIS_USER_TICKET + ":" + userTicket);
-        if (StringUtils.isBlank(userId)){
+        if (StringUtils.isBlank(userId)) {
             return IMOOCJSONResult.errorMsg("用户id为空");
         }
 
         String userToken = redisOperator.get(REDIS_USER_TOKEN + ":" + userId);
-        if (StringUtils.isBlank(userToken)){
+        if (StringUtils.isBlank(userToken)) {
             return IMOOCJSONResult.errorMsg("用户session为空");
         }
 
-        return IMOOCJSONResult.ok(JsonUtils.jsonToPojo(userToken,UsersVO.class));
+        return IMOOCJSONResult.ok(JsonUtils.jsonToPojo(userToken, UsersVO.class));
     }
 
     private String getCookie(HttpServletRequest request, String tmpTicketValue) {
         Cookie[] cookies = request.getCookies();
-        if (cookies == null || StringUtils.isBlank(tmpTicketValue)){
+        if (cookies == null || StringUtils.isBlank(tmpTicketValue)) {
             return null;
         }
 
         String cookieValue = null;
         for (Cookie cookie : cookies) {
-            if (tmpTicketValue.equals(cookie.getName())){
-                cookieValue =cookie.getValue();
+            if (tmpTicketValue.equals(cookie.getName())) {
+                cookieValue = cookie.getValue();
                 break;
             }
         }
@@ -181,11 +182,11 @@ public class SSOController {
     @PostMapping("/logout")
     @ResponseBody
     public IMOOCJSONResult logout(String userId,
-                       HttpServletRequest request,
-                       HttpServletResponse response){
+                                  HttpServletRequest request,
+                                  HttpServletResponse response) {
         //1 0. 获取CAS中的用户门票
         String userTicket = getCookie(request, REDIS_USER_COOKIE);
-        delCookie(response,REDIS_USER_COOKIE);
+        delCookie(response, REDIS_USER_COOKIE);
 
         // 2 清除redis的userTicket
         redisOperator.del(REDIS_USER_TICKET + ":" + userTicket);

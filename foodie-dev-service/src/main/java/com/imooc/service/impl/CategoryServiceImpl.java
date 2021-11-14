@@ -43,7 +43,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public List<NewItemsVO> getSixNewItemsLazy(Integer rootCatId) {
         Map<String, Object> map = new HashMap<>();
-        map.put("rootCatId",rootCatId);
+        map.put("rootCatId", rootCatId);
         List<NewItemsVO> sixNewItems = categoryMapperCustom.getSixNewItems(map);
         return sixNewItems;
     }

@@ -11,10 +11,13 @@ import java.util.List;
 import java.util.Map;
 
 public interface ItemsMapperCustom {
-    List<ItemCommentVO> queryItemComment(@Param("paramsMap") Map<String,Object> map);
-    List<SearchItemVO> search(@Param("paramsMap")Map<String,Object> map);
-    List<SearchItemVO> searchByCat(@Param("paramsMap")Map<String,Object> map);
-    List<ShopcartVO> queryItemsBySpecIds(@Param("paramsList")List<String> list);
+    List<ItemCommentVO> queryItemComment(@Param("paramsMap") Map<String, Object> map);
+
+    List<SearchItemVO> search(@Param("paramsMap") Map<String, Object> map);
+
+    List<SearchItemVO> searchByCat(@Param("paramsMap") Map<String, Object> map);
+
+    List<ShopcartVO> queryItemsBySpecIds(@Param("paramsList") List<String> list);
 
     int decreaseItemStock(@Param("specId") String specId, @Param("buyCounts") int buyCounts);
 }

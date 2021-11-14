@@ -15,12 +15,12 @@ public class StuController {
     private StuService stuService;
 
     @GetMapping("/getInfo")
-    public Object getStuInfo(Integer id){
+    public Object getStuInfo(Integer id) {
         return stuService.getInfo(id);
     }
 
     @PostMapping("/saveStu")
-    public Object saveStu(){
+    public Object saveStu() {
         Stu stu = new Stu();
         stu.setAge(18);
         stu.setName("tom");
@@ -29,7 +29,7 @@ public class StuController {
     }
 
     @PutMapping("/updateStu")
-    public Object updateStu(Integer id){
+    public Object updateStu(Integer id) {
         Stu stu = new Stu();
         stu.setAge(18);
         stu.setName("tom");
@@ -39,15 +39,15 @@ public class StuController {
     }
 
     @DeleteMapping("/deleteStu")
-    public Object deleteStu(Integer id){
+    public Object deleteStu(Integer id) {
         stuService.delete(id);
         return "ok";
     }
 
     @GetMapping("/setSession")
-    public String setSession(HttpServletRequest request){
+    public String setSession(HttpServletRequest request) {
         HttpSession session = request.getSession();
-        session.setAttribute("userInfo","new user");
+        session.setAttribute("userInfo", "new user");
         session.setMaxInactiveInterval(3600);
         session.getAttribute("userInfo");
         return "ok";

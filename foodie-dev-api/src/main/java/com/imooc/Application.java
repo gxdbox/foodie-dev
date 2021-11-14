@@ -8,11 +8,11 @@ import tk.mybatis.spring.annotation.MapperScan;
 
 @SpringBootApplication
 @MapperScan(basePackages = "com.imooc.mapper")
-@ComponentScan(basePackages = {"org.n3r.idworker", "com.imooc"} )
+@ComponentScan(basePackages = {"org.n3r.idworker", "com.imooc"})
 @EnableScheduling //开启定时任务
 //@EnableRedisHttpSession  // 开启使用redis作为spring session
 public class Application {
     public static void main(String[] args) {
-        SpringApplication.run(Application.class,args);
+        SpringApplication.run(Application.class, args);
     }
 }
