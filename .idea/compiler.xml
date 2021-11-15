@@ -8,11 +8,13 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="foodie-dev-pojo" />
+        <module name="foodie-dev-api" />
+        <module name="foodie-dev-mapper" />
+        <module name="foodie-dev-fs" />
         <module name="foodie-dev-service" />
         <module name="foodie-dev-sso" />
         <module name="foodie-dev-common" />
-        <module name="foodie-dev-api" />
-        <module name="foodie-dev-mapper" />
+        <module name="foodie-dev-search" />
       </profile>
     </annotationProcessing>
   </component>
@@ -20,8 +22,10 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="foodie-dev-api" options="-parameters" />
       <module name="foodie-dev-common" options="-parameters" />
+      <module name="foodie-dev-fs" options="-parameters" />
       <module name="foodie-dev-mapper" options="-parameters" />
       <module name="foodie-dev-pojo" options="-parameters" />
+      <module name="foodie-dev-search" options="-parameters" />
       <module name="foodie-dev-service" options="-parameters" />
       <module name="foodie-dev-sso" options="-parameters" />
     </option>
